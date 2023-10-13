@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { setUserFromLocalStorage } from './redux/reducers/authReducer';
 import { useEffect } from 'react';
+import ProductsPage from './pages/Products';
 
 function App() {
   const user = useSelector((state) => state.auth.user)
@@ -26,6 +27,8 @@ function App() {
           element={user ? <Home /> : <Navigate to="/login" />}
         />
         <Route path="/profile" element={user ? <Profile /> : <Navigate to="/login" />} />
+        <Route path="/products" element={<ProductsPage/>} />
+
         </Routes>
       </div>
     </BrowserRouter>

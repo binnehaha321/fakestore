@@ -1,6 +1,6 @@
 // Profile.js
 import React from 'react';
-import UserInfo from '../components/UserInfo';
+import UserInfo from '../components/Profile/UserInfo';
 import { useSelector } from 'react-redux';
 
 const Profile = () => {
