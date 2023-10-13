@@ -1,5 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUser } from '@fortawesome/free-solid-svg-icons';
 
 function Header() {
     return (
@@ -13,6 +15,9 @@ function Header() {
                         <Link to="/products">Products</Link>
                     </li>
                 </ul>
+                <Link to="/profile" className="profile-link">
+                    <FontAwesomeIcon icon={faUser} />
+                </Link>
             </nav>
         </header>
     );

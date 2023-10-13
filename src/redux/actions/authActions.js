@@ -16,7 +16,7 @@ export const login = (email, password) => async (dispatch, getState) => {
         if (userToLogin && userToLogin.address) {
             const { lat, lng } = userToLogin.address.geolocation;
 
-            const apiKey = '86202587509120873678x44647';
+            const apiKey = process.REACT_APP_GEOCODE_APIKEY;
 
             const countryResponse = await request.get(
                 `https://geocode.xyz/${lat},${lng}?json=1&auth=${apiKey}`
@@ -33,6 +33,7 @@ export const login = (email, password) => async (dispatch, getState) => {
             const addressLine = `${country} - ${city} city - ${street} street`;
             userToLogin.addressLine = addressLine;
             localStorage.setItem('user',JSON.stringify(userToLogin))
+            console.log(userToLogin)
         }
       dispatch(loginSuccess({ user: userToLogin }));
     } else {
