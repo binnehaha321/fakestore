@@ -1,14 +1,18 @@
 // Login.js
 import React from 'react';
-import { useDispatch } from 'react-redux';
-import { login } from '../redux/actions/authActions';
 import { Form, Input, Button, Row, Col } from 'antd';
+import { useDispatch } from 'react-redux';
+
+import { loginSuccess } from '../store/auth/auth.slice';
+import { login } from '../store/auth/auth.actions';
 
 const Login = () => {
     const dispatch = useDispatch();
 
-    const onFinish = (values) => {
-        dispatch(login(values.email, values.password));
+    const onFinish = async (values) => {
+        const userToLogin = await login(values.email, values.password)
+        console.log(userToLogin)
+        dispatch(loginSuccess(userToLogin));
     };
 
     return (

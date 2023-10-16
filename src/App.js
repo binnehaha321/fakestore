@@ -1,38 +1,37 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import Login from './pages/Login';
-import Profile from './pages/Profile';
-import Home from './pages/Home'; 
-import { useSelector } from 'react-redux';
+import React, { useEffect } from 'react';
+import { Routes, Route, Navigate } from "react-router-dom";
 import { useDispatch } from 'react-redux';
-import { setUserFromLocalStorage } from './redux/reducers/authReducer';
-import { useEffect } from 'react';
-import ProductsPage from './pages/Products';
+
+import { getUserFromLocalStorage } from './helpers/getUser';
+import { publicRoutes, privateRoutes } from './routes';
+import PrivateLayout from './layout/PrivateLayout';
 
 function App() {
-  const user = useSelector((state) => state.auth.user)
+  
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(setUserFromLocalStorage());
+    dispatch(getUserFromLocalStorage());
   }, [dispatch]);
 
   return (
-    <BrowserRouter>
-      <div className="App">
-        <Routes>
-        <Route path="/login" element={user ? <Navigate to="/" /> : <Login />} />
-        <Route
-          path="/"
-          element={user ? <Home /> : <Navigate to="/login" />}
-        />
-        <Route path="/profile" element={user ? <Profile /> : <Navigate to="/login" />} />
-        <Route path="/products" element={<ProductsPage/>} />
-
-        </Routes>
-      </div>
-    </BrowserRouter>
-  );
+    <Routes>
+      {publicRoutes?.map((route) => {
+        return (
+          <Route key={route.path} index={route.index} path={route.path} element={
+            <route.layout>
+              <route.component />
+            </route.layout>
+          } />
+        )
+      })}
+      {privateRoutes?.map((route) => {
+        return (
+          <Route key={route.path} path={route.path} element={<route.component />} />
+        )
+      })}
+    </Routes>
+);
 }
 
 export default App;
