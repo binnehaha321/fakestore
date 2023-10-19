@@ -9,10 +9,10 @@ const authSlice = createSlice({
   },
   reducers: {
     loginSuccess: (state, action) => {
-      state.user = action.payload;
+      state.user = action.payload.user;
     },
     loginFail: (state, action) => {
-      state.error = action.payload;
+      state.error = action.payload.error;
     },
     logoutSuccess: (state) => {
       state.user = null;

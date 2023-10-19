@@ -1,4 +1,4 @@
-import { logoutSuccess } from './auth.slice';
+import { loginFail, logoutSuccess } from './auth.slice';
 import request from '../../axios/index';
 import { capitalizeFirstLetter } from '../../helpers/capitalizeLetter';
 
@@ -36,5 +36,11 @@ export const login = async (email, password) => {
 };
 
 export const logout = () => (dispatch) => {
-  dispatch(logoutSuccess());
+    try{
+      dispatch(logoutSuccess());
+      localStorage.removeItem('user');
+    }
+    catch(err){
+      dispatch(loginFail({error: err}));
+    }
 };

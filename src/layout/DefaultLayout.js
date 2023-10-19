@@ -1,5 +1,5 @@
 import React from 'react'
-import Header from '../components/Home/Menu'
+import Header from '../components/Menu'
 
 const DefaultLayout = ({ children }) => {
   return (

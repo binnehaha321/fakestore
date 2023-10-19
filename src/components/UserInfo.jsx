@@ -3,12 +3,12 @@ import { Descriptions } from 'antd'
 import { useSelector } from 'react-redux'
 
 export default function UserInfo() {
-    const user = useSelector((state) => state.auth.user);
+    const { user } = useSelector((state) => state.auth);
 
     return (
         <div>
             <Descriptions bordered column={1}>
-                <Descriptions.Item label="First Name">{user.name.firstname}</Descriptions.Item>
+                <Descriptions.Item label="Last Name">{user.name.firstname}</Descriptions.Item>
                 <Descriptions.Item label="Last Name">{user.name.lastname}</Descriptions.Item>
                 <Descriptions.Item label="Email">{user.email}</Descriptions.Item>
                 <Descriptions.Item label="Address">{user.addressLine}</Descriptions.Item>

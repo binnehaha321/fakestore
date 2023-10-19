@@ -1,30 +1,35 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import { useDispatch, useSelector } from 'react-redux';
+import { setIsLoading, setProducts } from '../store/product/product.slice';
+
+
 import "../css/products.css";
 import "../css/header_menu.css"
 
-function ProductsPage() {
-    const [products, setProducts] = useState([]);
-    const [limit, setLimit] = useState(10);
-    const [isLoading, setIsLoading] = useState(false);
 
+function ProductsPage() {
+    const dispatch = useDispatch();
+    const { isLoading } = useSelector((state) => state.products)
+    let productFromManagement = useSelector((state) => state.productsManagement.products)
+
+    const [limit, setLimit] = useState(10);
     const handleLimitChange = (event) => {
         setLimit(event.target.value);
     };
 
-    const handleFilterClick = () => {
-        setIsLoading(true);
-
-        axios.get(`https://fakestoreapi.com/products?limit=${limit}`)
-            .then((response) => {
-                setProducts(response.data);
-                setIsLoading(false);
-            })
-            .catch((error) => {
-                console.error('Error fetching products:', error);
-                setIsLoading(false);
-            });
+    const handleFilterClick = async () => {
+        dispatch(setIsLoading(true));
+        try {
+            productFromManagement = productFromManagement.slice(0, limit);
+            dispatch(setProducts(productFromManagement));
+        } catch (error) {
+            console.error('Error handling products:', error);
+        } finally {
+            dispatch(setIsLoading(false));
+        }
     };
+
+    const { products } = useSelector((state) => state.products)
 
     return (
         <div>
@@ -44,7 +49,7 @@ function ProductsPage() {
             ) : (
                 <div className="product-grid">
                     {products.map((product) => (
-                        <div key={product.id} className="product-item">
+                        <div key={product.title} className="product-item">
                             <img src={product.image} alt={product.title} />
                             <p>{product.title}</p>
                             <p>${product.price}</p>

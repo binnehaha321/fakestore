@@ -1,33 +1,38 @@
 import DefaultLayout from "../layout/DefaultLayout";
-import Home from "../pages/Home";
-import Login from "../pages/Login";
-import ProductsPage from "../pages/Products";
-import Profile from "../pages/Profile";
+import SettingLayout from "../layout/SettingLayout";
 
+import Home from "../pages/Home";
+import ProductsPage from "../pages/Products";
+
+import ProductsManagement from "../pages/setting/ProductsManagement";
+import Profile from "../pages/setting/Profile";
 const publicRoutes = [
   {
     path: '/',
     component: Home,
     layout: DefaultLayout,
-    index: true
-  },
-  {
-    path: '/login',
-    component: Login,
-  },
+    index: true,
+  },  
   {
     path: '/products',
     component: ProductsPage,
-    layout: DefaultLayout
+    layout: DefaultLayout,
   },
 ]
 
 const privateRoutes = [
   {
-    path: '/profile',
+    path: '/setting/profile',
     component: Profile,
-    layout: DefaultLayout
+    layout: DefaultLayout,
+    subLayout: SettingLayout,
   },
+  {
+    path:'setting/products',
+    component: ProductsManagement,
+    layout: DefaultLayout,
+    subLayout: SettingLayout,
+  }
 ]
 
-export { publicRoutes, privateRoutes }
+export { publicRoutes, privateRoutes };
