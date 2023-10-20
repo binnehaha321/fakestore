@@ -1,27 +1,28 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { addProduct, setIsLoading } from '../../store/productManagement/productManagement.slice';
+import { addProduct, addProductSuccess } from '../../store/productManagement/productManagement.slice';
 import ProductList from '../../components/ProductList';
 import { insertProductsToLocalStorage } from '../../store/productManagement/productManagement.action';
 
 const ProductsManagement = () => {
     const dispatch = useDispatch();
+    const { products } = useSelector((state) => state.productsManagement);
+
     useEffect(() => {
-        const fetchData = () => {
+        const fetchData = async () => {
+            dispatch(addProduct())
             try {
-                dispatch(setIsLoading(true));
                 const products = localStorage.getItem('products');
-                if (products !== null) {
+                if (products) {
                     const parsedData = JSON.parse(products);
-                    dispatch(addProduct(parsedData));
+                    dispatch(addProductSuccess(parsedData));
                 }
                 else {
-                    insertProductsToLocalStorage();
+                    await insertProductsToLocalStorage();
                     const products = localStorage.getItem('products');
                     const parsedData = JSON.parse(products);
                     dispatch(addProduct(parsedData));
                 }
-                dispatch(setIsLoading(false));
             } catch (error) {
                 console.error('Error handling data:', error);
             }
@@ -29,9 +30,7 @@ const ProductsManagement = () => {
 
         fetchData();
     }, [dispatch]);
-
-    const { products } = useSelector((state) => state.productsManagement);
-
+    
     return (
         <>
             <ProductList data={products} />

@@ -11,7 +11,7 @@ const Login = () => {
 
     const onFinish = async (values) => {
         const userToLogin = await login(values.email, values.password)
-        dispatch(loginSuccess(userToLogin));
+        dispatch(loginSuccess({...userToLogin}));
     };
 
     return (

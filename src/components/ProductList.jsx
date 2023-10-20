@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Form, Input, InputNumber, Popconfirm, Table, Typography } from 'antd';
 
-import { addProduct } from '../store/productManagement/productManagement.slice';
+import { addProductSuccess } from '../store/productManagement/productManagement.slice';
 import { useDispatch } from 'react-redux';
 
 const EditableCell = ({
@@ -46,7 +46,7 @@ export default function ProductList({ data }) {
 
     const handleDelete = (key) => {
         const newData = data.filter((item) => item.key !== key);
-        dispatch(addProduct(newData));
+        dispatch(addProductSuccess(newData));
         localStorage.setItem("products", JSON.stringify(newData));
     };
 
@@ -74,15 +74,13 @@ export default function ProductList({ data }) {
                     ...item,
                     ...row,
                 });
-                dispatch(addProduct(newData));
-                localStorage.setItem("products", JSON.stringify(newData));
                 setEditingKey('');
             } else {
                 newData.push(row);
-                dispatch(addProduct(newData));
-                localStorage.setItem("products", JSON.stringify(newData));
-                setEditingKey('');
+                dispatch(addProductSuccess(newData));
             }
+            localStorage.setItem("products", JSON.stringify(newData));
+            setEditingKey('');
         } catch (errInfo) {
             console.log('Validate Failed:', errInfo);
         }

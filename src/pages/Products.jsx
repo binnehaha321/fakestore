@@ -1,35 +1,42 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setIsLoading, setProducts } from '../store/product/product.slice';
+import request from '../axios'
 
 
 import "../css/products.css";
 import "../css/header_menu.css"
+import { addProductSuccess } from '../store/productManagement/productManagement.slice';
 
 
 function ProductsPage() {
-    const dispatch = useDispatch();
-    const { isLoading } = useSelector((state) => state.products)
-    let productFromManagement = useSelector((state) => state.productsManagement.products)
-
+    const { products } = useSelector((state) => state.productsManagement)
+    const dispatch = useDispatch()
     const [limit, setLimit] = useState(10);
+    const [productsFiltered, setProductsFiltered] = useState([])
     const handleLimitChange = (event) => {
         setLimit(event.target.value);
     };
 
-    const handleFilterClick = async () => {
-        dispatch(setIsLoading(true));
-        try {
-            productFromManagement = productFromManagement.slice(0, limit);
-            dispatch(setProducts(productFromManagement));
-        } catch (error) {
-            console.error('Error handling products:', error);
-        } finally {
-            dispatch(setIsLoading(false));
-        }
+    const handleFilterClick = () => {
+        setProductsFiltered(products?.slice(0, limit))
     };
 
-    const { products } = useSelector((state) => state.products)
+    useEffect(() => {
+        const fetchProducts = async () => {
+            const { data } = await request('products')
+            localStorage.setItem('products', JSON.stringify(data))
+            dispatch(addProductSuccess(data))
+        }
+
+        const products = localStorage.getItem('products');
+        if (products) {
+            const parsedData = JSON.parse(products);
+            dispatch(addProductSuccess(parsedData))
+        } else {
+            fetchProducts()
+            
+        }
+    }, [dispatch])
 
     return (
         <div>
@@ -44,11 +51,11 @@ function ProductsPage() {
                 />
                 <button onClick={handleFilterClick}>Filter</button>
             </label>
-            {isLoading ? (
+            {false ? (
                 <p>Loading...</p>
             ) : (
                 <div className="product-grid">
-                    {products.map((product) => (
+                    {productsFiltered?.map((product) => (
                         <div key={product.title} className="product-item">
                             <img src={product.image} alt={product.title} />
                             <p>{product.title}</p>

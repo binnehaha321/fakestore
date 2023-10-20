@@ -2,7 +2,7 @@ import axios from "axios"
 
 
 export const insertProductsToLocalStorage = async () => {
-    try{
+    try {
         const response = await axios.get('https://fakestoreapi.com/products');
         const products = response.data; 
         const products_data = products.map((product, index) => {
@@ -13,16 +13,13 @@ export const insertProductsToLocalStorage = async () => {
                 price: product.price,
                 category: product.category,
             };
-            });
+        });
+        if (!products_data) return
         localStorage.setItem("products",JSON.stringify(products_data));
         console.log("success");
-        }
+    }
     catch(error){
         console.error('Error fetching products:', error);
         throw error;
     }
-
-
 }
-    
-

@@ -3,7 +3,7 @@ import { Descriptions } from 'antd'
 import { useSelector } from 'react-redux'
 
 export default function UserInfo() {
-    const { user } = useSelector((state) => state.auth);
+    const {user} = useSelector((state) => state.auth);
 
     return (
         <div>
