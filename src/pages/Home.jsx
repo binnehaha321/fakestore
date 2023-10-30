@@ -2,7 +2,6 @@ import React, { useEffect } from 'react'
 import request from '../axios';
 import { useState } from 'react';
 import { Spin } from 'antd';
-import { faDisplay } from '@fortawesome/free-solid-svg-icons';
 export default function Home() {
 
     const [products, setProducts] = useState([]);
