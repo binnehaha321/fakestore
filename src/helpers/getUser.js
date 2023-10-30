@@ -6,7 +6,7 @@ export const getUserFromLocalStorage = () => (dispatch) => {
   if (storedUser) {
     try{
       const user = JSON.parse(storedUser);
-      dispatch(loginSuccess({user: user}));
+      dispatch(loginSuccess(user));
     }
     catch(error){
       dispatch(loginFail({error:error}));

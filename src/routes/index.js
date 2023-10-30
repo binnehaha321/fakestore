@@ -1,11 +1,10 @@
 import DefaultLayout from "../layout/DefaultLayout";
 import SettingLayout from "../layout/SettingLayout";
-
 import Home from "../pages/Home";
 import ProductsPage from "../pages/Products";
-
 import ProductsManagement from "../pages/setting/ProductsManagement";
 import Profile from "../pages/setting/Profile";
+import Cart from "../pages/Cart";
 const publicRoutes = [
   {
     path: '/',
@@ -18,6 +17,11 @@ const publicRoutes = [
     component: ProductsPage,
     layout: DefaultLayout,
   },
+  {
+    path:'/cart',
+    component:Cart,
+    layout: DefaultLayout,
+  }
 ]
 
 const privateRoutes = [
@@ -32,7 +36,8 @@ const privateRoutes = [
     component: ProductsManagement,
     layout: DefaultLayout,
     subLayout: SettingLayout,
-  }
+  },
+
 ]
 
 export { publicRoutes, privateRoutes };

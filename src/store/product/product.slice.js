@@ -18,7 +18,7 @@ const productSlice = createSlice({
             state.products =  state.products.slice(0,quantity)
         },
         setIsLoading: (state,action) =>{
-            state.loading = action.payload
+            state.loading = action.payload;
         }
         },
 });

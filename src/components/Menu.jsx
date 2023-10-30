@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faGear } from '@fortawesome/free-solid-svg-icons';
+import { faGear, faShoppingCart } from '@fortawesome/free-solid-svg-icons';
 
 function Header() {
     return (
@@ -16,6 +16,10 @@ function Header() {
                     </li>
                 </ul>
                 <div>
+                    <Link to="/cart" className="setting-link">
+                        <FontAwesomeIcon icon={faShoppingCart} />
+                    </Link>
+
                     <Link to="/setting/profile" className="setting-link">
                         <FontAwesomeIcon icon={faGear} />
                     </Link>

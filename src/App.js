@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -9,15 +9,32 @@ import Login from './pages/Login';
 
 function App() {
   const dispatch = useDispatch();
-  
-  useEffect(() =>{
-    dispatch(getUserFromLocalStorage());
-  },[dispatch])
+  const {user} = useSelector((state) => state.auth);
 
-  const {user}  = useSelector((state) => state.auth);
+  useEffect(() => {
+    const fetchData = async () => {
+      await dispatch(getUserFromLocalStorage());
+    };
+
+    fetchData();
+  }, [dispatch]);
+
+
 
   return (
     <Routes>
+      {publicRoutes.map((route) => (
+        <Route
+          key={route.path}
+          index={route.index}
+          path={route.path}
+          element={
+            <route.layout>
+              <route.component />
+            </route.layout>
+          }
+        />
+      ))}
       {privateRoutes.map((route) => (
         <Route
           key={route.path}
@@ -32,18 +49,6 @@ function App() {
             ) : (
               <Navigate to="/login" />
             )
-          }
-        />
-      ))}
-      {publicRoutes.map((route) => (
-        <Route
-          key={route.path}
-          index={route.index}
-          path={route.path}
-          element={
-            <route.layout>
-              <route.component />
-            </route.layout>
           }
         />
       ))}

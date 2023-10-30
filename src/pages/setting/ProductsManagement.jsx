@@ -1,11 +1,15 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Spin } from 'antd';
+
 import { addProduct, setIsLoading } from '../../store/productManagement/productManagement.slice';
 import ProductList from '../../components/ProductList';
 import { insertProductsToLocalStorage } from '../../store/productManagement/productManagement.action';
 
+
 const ProductsManagement = () => {
     const dispatch = useDispatch();
+    const { loading } = useSelector((state) => state.productsManagement);
     useEffect(() => {
         const fetchData = () => {
             try {
@@ -34,7 +38,11 @@ const ProductsManagement = () => {
 
     return (
         <>
-            <ProductList data={products} />
+            {loading ?
+                <Spin id='spin' size="large" tip="Loading..." />
+                :
+                <ProductList data={products} />
+            }
         </>
     );
 };

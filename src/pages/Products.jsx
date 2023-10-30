@@ -1,27 +1,77 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setIsLoading, setProducts } from '../store/product/product.slice';
+import { Select, Form, Input, Button } from 'antd';
+import { Spin } from 'antd';
 
-
+import { setIsLoading } from '../store/product/product.slice';
+import { fetchProducts } from '../store/product/product.action';
 import "../css/products.css";
 import "../css/header_menu.css"
 
 
+const { Option } = Select;
+const categories = [
+    "electronics",
+    "jewelry",
+    "men's clothing",
+    "women's clothing"
+];
+
+
+function FilterByCategory({ handleCategoryChange }) {
+    return (
+        <Select
+            showSearch
+            style={{ width: 200 }}
+            placeholder="Select a category"
+            optionFilterProp="children"
+            onChange={handleCategoryChange}
+            filterOption={(input, option) =>
+                option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+            }
+        >
+            {categories.map(category => (
+                <Option key={category} value={category}>
+                    {category}
+                </Option>
+            ))}
+        </Select>
+    );
+}
+
 function ProductsPage() {
     const dispatch = useDispatch();
-    const { isLoading } = useSelector((state) => state.products)
+
+    const { loading } = useSelector((state) => state.products)
     let productFromManagement = useSelector((state) => state.productsManagement.products)
+    let [products, setProducts] = useState([]);
+    let [category, setCategory] = useState('');
 
     const [limit, setLimit] = useState(10);
+
     const handleLimitChange = (event) => {
         setLimit(event.target.value);
     };
 
+    function filterProduct(products, category) {
+        let filtered = products.filter(product => product.category === category);
+        filtered = filtered.slice(0, limit);
+        setProducts(filtered);
+    }
+
     const handleFilterClick = async () => {
+        console.log("run")
         dispatch(setIsLoading(true));
         try {
-            productFromManagement = productFromManagement.slice(0, limit);
-            dispatch(setProducts(productFromManagement));
+            if (productFromManagement.length > 0) {
+                console.log(productFromManagement);
+                filterProduct(productFromManagement, category);
+            }
+            else {
+                let productFromAPI = await fetchProducts();
+                console.log(productFromAPI)
+                filterProduct(productFromAPI, category);
+            }
         } catch (error) {
             console.error('Error handling products:', error);
         } finally {
@@ -29,23 +79,33 @@ function ProductsPage() {
         }
     };
 
-    const { products } = useSelector((state) => state.products)
+    const handleCategoryChange = value => {
+        setCategory(value);
+    }
 
     return (
         <div>
             <h1>Products Page</h1>
-            <label>
-                Show:
-                <input
-                    type="text"
-                    value={limit}
-                    onChange={handleLimitChange}
-                    placeholder="Enter the number of products"
-                />
-                <button onClick={handleFilterClick}>Filter</button>
-            </label>
-            {isLoading ? (
-                <p>Loading...</p>
+
+            <Form layout="inline" onFinish={handleFilterClick}>
+                <Form.Item name="limit">
+                    <Input
+                        placeholder="Number of products"
+                        onChange={handleLimitChange}
+                    />
+                </Form.Item>
+                <Form.Item name="category">
+                    <FilterByCategory handleCategoryChange={handleCategoryChange} />
+                </Form.Item>
+                <Form.Item>
+                    <Button type="primary" htmlType="submit">
+                        Apply Filters
+                    </Button>
+                </Form.Item>
+            </Form>
+
+            {loading ? (
+                <Spin id='spin' size="large" tip="Loading..." />
             ) : (
                 <div className="product-grid">
                     {products.map((product) => (
@@ -57,6 +117,8 @@ function ProductsPage() {
                     ))}
                 </div>
             )}
+
+
         </div>
     );
 }

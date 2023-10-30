@@ -2,6 +2,7 @@
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 20px;
+    margin-top: 1vh;
 }
 
 .product-item {
@@ -17,4 +18,11 @@
     max-height: 150px;
     display: block;
     margin: 0 auto;
+}
+
+#spin {
+    display: flex;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
 }

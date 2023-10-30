@@ -1,10 +1,11 @@
+
 import { loginFail, logoutSuccess } from './auth.slice';
+
 import request from '../../axios/index';
 import { capitalizeFirstLetter } from '../../helpers/capitalizeLetter';
 
-export const login = async (email, password) => {
-  try {
-    const response = await request.get('/users'); 
+const fetchUserData = async (email,password)=>{
+  const response = await request.get('/users'); 
     const users = response.data;
     email = email.toLowerCase();
     console.log(email)
@@ -24,12 +25,22 @@ export const login = async (email, password) => {
       [city, street] = capitalizeFirstLetter([city, street])
       const addressLine = `${countryname} - ${city} city - ${street} street`;
       userToLogin.addressLine = addressLine ? addressLine : '';
-      localStorage.setItem('user',JSON.stringify(userToLogin))
-      return userToLogin
-    } else {
+      localStorage.setItem('user',JSON.stringify({...userToLogin}))
+      
+    }else {
       console.log('no address found')
     }
-  } catch (error) {
+
+    return userToLogin;
+}
+
+export const login = async (email, password) => {
+  try {
+    
+      const userToLogin = await fetchUserData(email,password);
+      return userToLogin;
+    }
+   catch (error) {
     console.log("An error occurred when logging in", error)
     alert(`An error occurred when logging in ${error}`);
   }

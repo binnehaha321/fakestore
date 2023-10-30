@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux'
 
 export default function UserInfo() {
     const { user } = useSelector((state) => state.auth);
-
+    console.log(user);
     return (
         <div>
             <Descriptions bordered column={1}>
