@@ -21,26 +21,26 @@ export const fetchAllCart = async(user) => { // => list: []
 
         return products;
     }
-        // merge quantity of those products which has the same id 
-        function mergeProduct(objects){ // => list: []
-            let mergeObject = new Map();
-            objects.forEach(obj =>{
-                const key = obj.id;
-                if (!mergeObject.has(key)) 
-                {
-                    mergeObject.set(key, {...obj});
-                }
-                else
-                {
-                    mergeObject.set(key,{
-                        ...obj,
-                        quantity: mergeObject.get(key).quantity + obj.quantity,
-                    })
-                }
-            })
-            return Array.from(mergeObject.values());
+    // merge quantity of those products which has the same id 
+    function mergeProduct(objects){ // => list: []
+        let mergeObject = new Map();
+        objects.forEach(obj =>{
+            const key = obj.id;
+            if (!mergeObject.has(key)) 
+            {
+                mergeObject.set(key, {...obj});
+            }
+            else
+            {
+                mergeObject.set(key,{
+                    ...obj,
+                    quantity: mergeObject.get(key).quantity + obj.quantity,
+                })
+            }
+        })
+        return Array.from(mergeObject.values());
 
-        }
+    }
 
     const {data} = await request.get("/carts");       // [{id: 1, userId: 1, date: '2020-03-02T00:00:00.000Z', products: Array(3), __v: 0}, ...]
     const userCart = data.filter((item) => item.userId  === user.id)  

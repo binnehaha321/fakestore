@@ -21,6 +21,17 @@
         state.error = action.payload;
         state.loading = false; // Set loading to false when an error occurs
       },
+      // addProduct: (state, action) => {
+      //   state.loading = true
+      // },
+      // addProductSuccess: (state, action) => {
+      //   state.loading = false
+      //   state.products = action.payload;
+      // },
+      // addProductFail: (state, action) => {
+      //   state.loading = false
+      //   state.error = action.payload;
+      // },
     },
   });
 
