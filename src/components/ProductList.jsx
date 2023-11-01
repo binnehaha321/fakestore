@@ -1,10 +1,9 @@
 import React, { useState } from 'react'
+import { useDispatch } from 'react-redux';
 import { Form, Input, InputNumber, Popconfirm, Table, Typography } from 'antd';
 
 import { addProduct, addProductFailed, addProductSuccess } from '../store/productManagement/productManagement.slice';
-import { useDispatch } from 'react-redux';
 
-import request from '../axios';
 const EditableCell = ({
     editing,
     dataIndex,

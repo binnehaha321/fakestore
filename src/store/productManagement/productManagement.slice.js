@@ -7,7 +7,7 @@ const initialState = {
 }
 
 const productManagementSlice = createSlice({
-    name:"productManagement",
+    name: "productManagement",
     initialState,
     reducers:{
     addProduct:(state,action)=>{
@@ -18,7 +18,7 @@ const productManagementSlice = createSlice({
         state.loading = false;
     },
     addProductFailed : (state,action) => {
-        state.error = action.action.payload;
+        state.error = action.payload;
         state.loading = false;
     }
 }

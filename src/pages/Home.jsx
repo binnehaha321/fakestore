@@ -1,17 +1,15 @@
 import React, { useEffect } from 'react'
 import request from '../axios';
 import { Spin } from 'antd';
-import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { loadProduct, loadProductFailed, loadProductSuccess } from '../store/home/home.slice';
+import { getProducts } from '../store/home/home.action';
 export default function Home() {
     const dispatch = useDispatch();
-    const { products } = useSelector((state) => state.home);
-    const [categories, setCategories] = useState([]);
+    const { products, loading } = useSelector((state) => state.home);
 
     const fetchProductWithCategory = async (category) => {
-        // if local storage have data 
+        // if local storage have data
         let productsFromLocalStorage = localStorage.getItem("products") !== null;
         if (productsFromLocalStorage) {
             let productsWithCategory = JSON.parse(localStorage.getItem("products"));
@@ -38,56 +36,66 @@ export default function Home() {
     }
 
     useEffect(() => {
-        async function getAllCategories() {
-            try {
-                const { data } = await request.get("/products/categories");
-                const length = data.length;
-                setCategories(data);
-                let categoryProductData = [];
-                for (let i = 0; i < length; i++) {
-                    const productWithCategory = await fetchProductWithCategory(data[i]);
-                    categoryProductData = categoryProductData.concat(productWithCategory);
+        // async function getAllCategories() {
+        //     dispatch(loadProduct());
+        //     try {
+        //         const { data } = await request.get("/products/categories");
+        //         const length = data.length;
+        //         setCategories(data);
+        //         let categoryProductData = [];
+        //         for (let i = 0; i < length; i++) {
+        //             const productWithCategory = await fetchProductWithCategory(data[i]);
+        //             categoryProductData = categoryProductData.concat(productWithCategory);
 
-                }
-                dispatch(loadProduct(categoryProductData));
-                console.log(categoryProductData);
-            }
-            catch (error) {
-                dispatch(loadProductFailed(error));
-                console.log(error);
-            }
-            finally {
-                dispatch(loadProductSuccess());
-            }
-        }
-        getAllCategories();
+        //         }
+        //         dispatch(loadProductSuccess(categoryProductData));
+        //         console.log(categoryProductData);
+        //     }
+        //     catch (error) {
+        //         dispatch(loadProductFailed(error));
+        //         console.log(error);
+        //     }
+        // }
+        // getAllCategories();
 
     }, [])
+
+    useEffect(() => {
+        getProducts(dispatch)
+    }, [dispatch])
 
     return (
         <>
             <h1 style={{ display: "flex", width: '100vw', justifyContent: 'center' }}>Our Products</h1>
-            <div>
-                {products.length > 0 ? (
-                    categories.map((category, index) => (
-                        <div key={index}>
-                            <h2>{category}</h2>
-                            <div className="product-grid">
-                                {products
-                                    .filter((product) => product.category === category).slice(0, 4)
-                                    .map((product, productIndex) => (
-                                        <div key={productIndex} className="product-item">
-                                            <img src={product.image} alt={product.title} />
-                                            <p>{product.title}</p>
-                                            <p>${product.price}</p>
-                                        </div>
-                                    ))}
-                            </div>
+            {/* {productList.length ? (
+                categories.map((category, index) => (
+                    <div key={index}>
+                        <h2>{category}</h2>
+                        <div className="product-grid">
+                            {products
+                                .filter((product) => product.category === category).slice(0, 4)
+                                .map((product, productIndex) => (
+                                    <div key={productIndex} className="product-item">
+                                        <img src={product.image} alt={product.title} />
+                                        <p>{product.title}</p>
+                                        <p>${product.price}</p>
+                                    </div>
+                                ))}
                         </div>
-                    ))
-                ) : <Spin id='spin' size="large" tip="Loading..." />}
-            </div>
-
+                    </div>
+                ))
+            ) : <Spin id='spin'  tip="Loading..." />} */}
+            {loading ? <Spin id='spin' size="large" /> : (
+                <div className='product-grid'>
+                    {products?.map((product) => (
+                        <div key={product.id} className="product-item">
+                            <img src={product.image} alt={product.title} />
+                            <p>{product.title}</p>
+                            <p>${product.price}</p>
+                        </div>
+                    ))}
+                </div>
+            )}
         </>
 
     )

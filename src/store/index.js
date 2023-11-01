@@ -4,13 +4,15 @@ import productSlice from './product/product.slice';
 import productManagementSlice from './productManagement/productManagement.slice';
 import cartSlice from './cart/cart.slice';
 import homeSlice from './home/home.slice';
+import categorySlice from './category/category.slice';
 const store = configureStore({
   reducer: {
     auth: authSlice,
-    products: productSlice,
+    product: productSlice,
     productsManagement: productManagementSlice,
     cart:cartSlice,
     home: homeSlice,
+    category: categorySlice,
   },
 });
 

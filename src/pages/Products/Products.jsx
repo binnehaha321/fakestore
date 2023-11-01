@@ -13,14 +13,17 @@ import "../../css/header_menu.css"
 
 function ProductsPage() {
     const dispatch = useDispatch();
-
-    const { products, loading } = useSelector((state) => state.products)
-    let [category, setCategory] = useState('all');
-
+    const { products, loading } = useSelector((state) => state.product)
+    const [category, setCategory] = useState('all');
     const [limit, setLimit] = useState(4);
-
+    
     const handleLimitChange = (event) => {
-        setLimit(event.target.value);
+        const limitValue = event.target.value
+        if (Number(limitValue) <= 0) {
+            setLimit(1)
+        } else {
+            setLimit(event.target.value);
+        }
     };
 
     function filterProduct(products, category) {
@@ -82,9 +85,11 @@ function ProductsPage() {
             <Form layout="inline" onFinish={handleFilterClick}>
                 <Form.Item name="limit">
                     <Input
+                        type='number'
                         defaultValue={limit}
                         placeholder="Number of products"
                         onChange={handleLimitChange}
+                        min={1}
                     />
                 </Form.Item>
                 <Form.Item name="category">
