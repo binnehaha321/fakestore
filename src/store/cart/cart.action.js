@@ -56,11 +56,14 @@ export const fetchAllCart = async (userId) => {
 };
 //------------------------------------------------------------------------------------------------------------------------------------------------
 
+
+    
+
+
 export const calculateTotalPrice = (products) => {
     let totalPrice = 0;
     if (products && products.length > 0) {
         totalPrice = products.reduce((total, product) => total + (product.price * product.quantity), 0);
     }
-    return totalPrice.toFixed(2);
-};
-
+    return totalPrice;
+}
