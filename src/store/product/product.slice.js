@@ -6,8 +6,8 @@ const initialState = {
     loading:false,
 }
 
-const homeSlice = createSlice({
-    name:"home",
+const productsSlice = createSlice({
+    name:"products",
     initialState,
     reducers:{
     updateProduct:(state,action)=>{
@@ -24,5 +24,5 @@ const homeSlice = createSlice({
 }
 })
 
-export const {updateProduct, updateProductSuccess, updateProductFailed} = homeSlice.actions
-export default homeSlice.reducer;
+export const {updateProduct, updateProductSuccess, updateProductFailed} = productsSlice.actions
+export default productsSlice.reducer;
