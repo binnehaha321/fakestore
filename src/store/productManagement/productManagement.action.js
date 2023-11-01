@@ -1,13 +1,12 @@
-import axios from "axios"
-
+import request from '../../axios';
 
 export const insertProductsToLocalStorage = async () => {
     try{
-        const response = await axios.get('https://fakestoreapi.com/products');
+        const response = await request.get('/products');
         const products = response.data; 
         const products_data = products.map((product, index) => {
             return {
-                key: product.title,
+                key: product.id,
                 image: product.image,
                 title: product.title,
                 price: product.price,
@@ -21,7 +20,6 @@ export const insertProductsToLocalStorage = async () => {
         console.error('Error fetching products:', error);
         throw error;
     }
-
 
 }
     

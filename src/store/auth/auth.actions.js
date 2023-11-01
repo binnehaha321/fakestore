@@ -50,6 +50,8 @@ export const logout = () => (dispatch) => {
     try{
       dispatch(logoutSuccess());
       localStorage.removeItem('user');
+      localStorage.removeItem('cart');
+
     }
     catch(err){
       dispatch(loginFail({error: err}));

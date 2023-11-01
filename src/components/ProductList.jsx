@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
 import { Form, Input, InputNumber, Popconfirm, Table, Typography } from 'antd';
 
-import { addProduct } from '../store/productManagement/productManagement.slice';
+import { addProduct, addProductFailed, addProductSuccess } from '../store/productManagement/productManagement.slice';
 import { useDispatch } from 'react-redux';
 
+import request from '../axios';
 const EditableCell = ({
     editing,
     dataIndex,
@@ -45,9 +46,17 @@ export default function ProductList({ data }) {
     const dispatch = useDispatch();
 
     const handleDelete = (key) => {
-        const newData = data.filter((item) => item.key !== key);
-        dispatch(addProduct(newData));
-        localStorage.setItem("products", JSON.stringify(newData));
+        try {
+            const newData = data.filter((item) => item.key !== key);
+            dispatch(addProduct(newData));
+            localStorage.setItem("products", JSON.stringify(newData));
+        }
+        catch (err) {
+            dispatch(addProductFailed(err));
+        }
+        finally {
+            dispatch(addProductSuccess());
+        }
     };
 
     const edit = (record) => {
@@ -63,28 +72,32 @@ export default function ProductList({ data }) {
     const cancel = () => {
         setEditingKey('');
     };
+
     const save = async (key) => {
         try {
             const row = await form.validateFields();
+            console.log(row);
+
             const newData = [...data];
             const index = newData.findIndex((item) => key === item.key);
-            if (index > -1) {
-                const item = newData[index];
-                newData.splice(index, 1, {
-                    ...item,
-                    ...row,
-                });
-                dispatch(addProduct(newData));
-                localStorage.setItem("products", JSON.stringify(newData));
-                setEditingKey('');
-            } else {
-                newData.push(row);
-                dispatch(addProduct(newData));
-                localStorage.setItem("products", JSON.stringify(newData));
-                setEditingKey('');
-            }
-        } catch (errInfo) {
-            console.log('Validate Failed:', errInfo);
+
+            const item = newData[index];
+            console.log("item:", item);
+
+            newData.splice(index, 1, {
+                ...item,
+                ...row,
+            });
+            dispatch(addProduct(newData));
+            localStorage.setItem('products', JSON.stringify(newData));
+            setEditingKey('');
+
+        } catch (err) {
+            console.log('Validate Failed:', err);
+            dispatch(addProductFailed(err));
+        }
+        finally {
+            dispatch(addProductSuccess());
         }
     };
 

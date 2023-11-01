@@ -1,36 +1,64 @@
 import React, { useEffect } from 'react'
 import request from '../axios';
-import { useState } from 'react';
 import { Spin } from 'antd';
-export default function Home() {
+import { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 
-    const [products, setProducts] = useState([]);
+import { loadProduct, loadProductFailed, loadProductSuccess } from '../store/home/home.slice';
+export default function Home() {
+    const dispatch = useDispatch();
+    const { products } = useSelector((state) => state.home);
     const [categories, setCategories] = useState([]);
 
     const fetchProductWithCategory = async (category) => {
-        return await request.get(`/products/category/${category}`)
-            .then((response) => {
-                return response.data;
-            })
-            .catch((error) => {
-                console.error('Error fetching products:', error);
-                throw error;
-            });
+        // if local storage have data 
+        let productsFromLocalStorage = localStorage.getItem("products") !== null;
+        if (productsFromLocalStorage) {
+            let productsWithCategory = JSON.parse(localStorage.getItem("products"));
+            console.log(productsWithCategory);
+            productsWithCategory = productsWithCategory.filter((product) => product.category === category)
+            return productsWithCategory;
+        }
+        else {
+            if (products.length > 0) {
+                console.log(products);
+                return products;
+            }
+            else {
+                return await request.get(`/products/category/${category}`)
+                    .then((response) => {
+                        return response.data;
+                    })
+                    .catch((error) => {
+                        console.error('Error fetching products:', error);
+                        throw error;
+                    });
+            }
+        }
     }
 
     useEffect(() => {
         async function getAllCategories() {
-            const { data } = await request.get("/products/categories");
-            const length = data.length;
-            setCategories(data);
-            let categoryProductData = [];
-            for (let i = 0; i < length; i++) {
-                const productWithCategory = await fetchProductWithCategory(data[i]);
-                categoryProductData = categoryProductData.concat(productWithCategory);
+            try {
+                const { data } = await request.get("/products/categories");
+                const length = data.length;
+                setCategories(data);
+                let categoryProductData = [];
+                for (let i = 0; i < length; i++) {
+                    const productWithCategory = await fetchProductWithCategory(data[i]);
+                    categoryProductData = categoryProductData.concat(productWithCategory);
 
+                }
+                dispatch(loadProduct(categoryProductData));
+                console.log(categoryProductData);
             }
-            setProducts(categoryProductData);
-            console.log(categoryProductData);
+            catch (error) {
+                dispatch(loadProductFailed(error));
+                console.log(error);
+            }
+            finally {
+                dispatch(loadProductSuccess());
+            }
         }
         getAllCategories();
 

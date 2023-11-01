@@ -11,25 +11,18 @@ const productManagementSlice = createSlice({
     initialState,
     reducers:{
     addProduct:(state,action)=>{
-            state.products= action.payload;
+        state.loading = true;
+        state.products= action.payload;
     },
-    deleteProduct:(state,action)=>{
-        const index = state.products.findIndex(item => item._id === action.payload);
-        if (index !== -1) {
-            state.products.splice(index, 1);
-        }
+    addProductSuccess: (state) =>{
+        state.loading = false;
     },
-    updateProduct:(state,action)=>{
-        let updatedProducts=[...state.products]
-        let targetProduct=updatedProducts.filter((product)=> product._id===action.payload)[0];
-        Object.assign(targetProduct, action.updateData);
-        return{...state, products:updatedProducts};
-    },
-    setIsLoading:(state,action) =>{
-        state.loading= action.payload;
-    },
+    addProductFailed : (state,action) => {
+        state.error = action.action.payload;
+        state.loading = false;
+    }
 }
 })
 
-export const {addProduct, deleteProduct, updateProduct, setIsLoading} = productManagementSlice.actions
+export const {addProduct, addProductSuccess, addProductFailed} = productManagementSlice.actions
 export default productManagementSlice.reducer;

@@ -10,19 +10,19 @@ const homeSlice = createSlice({
     name:"home",
     initialState,
     reducers:{
-    updateProduct:(state,action)=>{
+    loadProduct:(state,action)=>{
         state.loading = true;
         state.products= action.payload;
     },
-    updateProductSuccess: (state) =>{
+    loadProductSuccess: (state) =>{
         state.loading = false;
     },
-    updateProductFailed : (state,action) => {
+    loadProductFailed : (state,action) => {
         state.loading = false;
         state.error = action.payload;
     }
 }
 })
 
-export const {updateProduct, updateProductSuccess, updateProductFailed} = homeSlice.actions
+export const {loadProduct, loadProductSuccess, loadProductFailed} = homeSlice.actions
 export default homeSlice.reducer;

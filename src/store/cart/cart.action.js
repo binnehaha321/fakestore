@@ -1,58 +1,66 @@
 import request from '../../axios/index';
 
-export const fetchAllCart = async(user) => { // => list: []
-
-    // helper function
-        // get every single product data and add to a list
-    async function fetchProductData(cartItem){ // => list: []  
-        let products = [];
-        const productsLength = cartItem.products.length;
-        for (let i = 0; i  < productsLength; i++)
-        {   
-            // cartItem.products -> [{0: {productId: 1, quantity: 4}  ,1: ...}]
-            const productId = cartItem.products[i].productId;
-            const quantity = cartItem.products[i].quantity;
-            let {data} = await request.get(`/products/${productId}`);
-            //data -> {id: , title: '', price: '', description: '', category: '', …}
-            data['quantity'] = quantity;
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+// Fetch product data for a single cart item
+async function fetchProductData(cartItem) {
+    let products = [];
+    for (const item of cartItem.products) {
+        try {
+            const { productId, quantity } = item;
+            const { data } = await request.get(`/products/${productId}`);
+            data.quantity = quantity;
             products.push(data);
-            
+            console.log(data);
+        } catch (error) {
+            console.error("Error fetching product data:", error);
         }
-
-        return products;
     }
-        // merge quantity of those products which has the same id 
-        function mergeProduct(objects){ // => list: []
-            let mergeObject = new Map();
-            objects.forEach(obj =>{
-                const key = obj.id;
-                if (!mergeObject.has(key)) 
-                {
-                    mergeObject.set(key, {...obj});
-                }
-                else
-                {
-                    mergeObject.set(key,{
-                        ...obj,
-                        quantity: mergeObject.get(key).quantity + obj.quantity,
-                    })
-                }
-            })
-            return Array.from(mergeObject.values());
-
-        }
-
-    const {data} = await request.get("/carts");       // [{id: 1, userId: 1, date: '2020-03-02T00:00:00.000Z', products: Array(3), __v: 0}, ...]
-    const userCart = data.filter((item) => item.userId  === user.id)  
-    let productData = [];
-    for (let i = 0; i < userCart.length; i++)
-    {
-        let products = await fetchProductData(userCart[i]);
-        productData = productData.concat(products);
-    }
-
-    productData = mergeProduct(productData);
-
-    console.log(productData);
-    return productData;
+    return products;
 }
+
+// Merge quantity of products with the same ID
+function mergeProduct(objects) {
+    const mergeObject = new Map();
+    objects.forEach(obj => {
+        const key = obj.id;
+        if (!mergeObject.has(key)) {
+            mergeObject.set(key, { ...obj });
+        } else {
+            mergeObject.set(key, {
+                ...obj,
+                quantity: mergeObject.get(key).quantity + obj.quantity,
+            });
+        }
+    });
+    return Array.from(mergeObject.values());
+}
+
+export const fetchAllCart = async (userId) => {   
+    try {
+        const requestUserCart = await request.get(`carts/user/${userId}`);
+        const userCart = requestUserCart.data;
+        console.log(userCart);
+
+        let productData = [];
+        for (const cartItem of userCart) {
+            console.log(cartItem);
+            const products = await fetchProductData(cartItem);
+            productData = productData.concat(products);
+        }
+
+        productData = mergeProduct(productData);
+        localStorage.setItem("cart", JSON.stringify(productData));
+    } catch (error) {
+        console.error("Error fetching user's cart:", error);
+    }
+};
+//------------------------------------------------------------------------------------------------------------------------------------------------
+
+export const calculateTotalPrice = (products) => {
+    let totalPrice = 0;
+    if (products && products.length > 0) {
+        totalPrice = products.reduce((total, product) => total + (product.price * product.quantity), 0);
+    }
+    return totalPrice.toFixed(2);
+};
+

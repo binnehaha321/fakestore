@@ -10,19 +10,19 @@
     name: "cart",
     initialState,
     reducers: {
-      addProduct: (state, action) => {
+      updateProduct: (state, action) => {
+        state.loading = true;
         state.products = action.payload;
-        state.error = null; // Reset error if products are inserted successfully
       },
-      setIsLoading: (state, action) => {
-        state.loading = action.payload;
+      updateProductSuccess : (state) =>{
+        state.loading = false;
       },
-      setError: (state, action) => {
+      updateProductFailed : (state,action) => {
+        state.loading = false;
         state.error = action.payload;
-        state.loading = false; // Set loading to false when an error occurs
-      },
+      }
     },
   });
 
-  export const { addProduct, setIsLoading, setError } = cartSlice.actions;
+  export const { updateProduct, updateProductFailed, updateProductSuccess} = cartSlice.actions;
   export default cartSlice.reducer;

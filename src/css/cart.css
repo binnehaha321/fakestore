@@ -4,3 +4,22 @@
     /* Define column widths */
     gap: 20px;
 }
+
+.product-quantity {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.categories-frame {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.category-item {
+    background-color: #f0f0f0;
+    padding: 8px 12px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
