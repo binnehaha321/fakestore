@@ -7,21 +7,21 @@ const initialState = {
 }
 
 const homeSlice = createSlice({
-    name:"home",
+    name: "home",
     initialState,
     reducers:{
-    loadProduct:(state,action)=>{
-        state.loading = true;
-        state.products= action.payload;
-    },
-    loadProductSuccess: (state) =>{
-        state.loading = false;
-    },
-    loadProductFailed : (state,action) => {
-        state.loading = false;
-        state.error = action.payload;
+        loadProduct:(state)=>{
+            state.loading = true;
+        },
+        loadProductSuccess: (state, action) => {
+            state.loading = false;
+            state.products= [...state.products, ...action.payload];
+        },
+        loadProductFailed : (state,action) => {
+            state.loading = false;
+            state.error = action.payload;
+        },
     }
-}
 })
 
 export const {loadProduct, loadProductSuccess, loadProductFailed} = homeSlice.actions

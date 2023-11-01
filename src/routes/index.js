@@ -5,6 +5,7 @@ import ProductsPage from "../pages/Products/Products";
 import ProductsManagement from "../pages/setting/ProductsManagement";
 import Profile from "../pages/setting/Profile";
 import Cart from "../pages/Cart";
+import SingleProduct from "../pages/SingleProduct/SingleProduct";
 const publicRoutes = [
   {
     path: '/',
@@ -15,6 +16,11 @@ const publicRoutes = [
   {
     path: '/products',
     component: ProductsPage,
+    layout: DefaultLayout,
+  },
+  {
+    path: '/products/:product_id',
+    component: SingleProduct,
     layout: DefaultLayout,
   },
   {
