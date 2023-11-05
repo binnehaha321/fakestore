@@ -17,6 +17,7 @@ const publicRoutes = [
     path: '/products',
     component: ProductsPage,
     layout: DefaultLayout,
+
   },
   {
     path: '/products/:product_id',

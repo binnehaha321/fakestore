@@ -15,7 +15,7 @@ const homeSlice = createSlice({
         },
         loadProductSuccess: (state, action) => {
             state.loading = false;
-            state.products= [...state.products, ...action.payload];
+            state.products= action.payload;
         },
         loadProductFailed : (state,action) => {
             state.loading = false;

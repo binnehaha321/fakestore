@@ -16,7 +16,7 @@ function ProductsPage() {
     const { products, loading } = useSelector((state) => state.product)
     const [category, setCategory] = useState('all');
     const [limit, setLimit] = useState(4);
-    
+
     const handleLimitChange = (event) => {
         const limitValue = event.target.value
         if (Number(limitValue) <= 0) {

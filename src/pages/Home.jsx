@@ -1,103 +1,49 @@
-import React, { useEffect } from 'react'
-import request from '../axios';
-import { Spin } from 'antd';
+import React, { useState } from 'react';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
+import { Button, Spin } from 'antd';
 
-import { getProducts } from '../store/home/home.action';
-export default function Home() {
+import { getProducts } from "../store/home/home.action"
+const Home = () => {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const { products, loading } = useSelector((state) => state.home);
-
-    const fetchProductWithCategory = async (category) => {
-        // if local storage have data
-        let productsFromLocalStorage = localStorage.getItem("products") !== null;
-        if (productsFromLocalStorage) {
-            let productsWithCategory = JSON.parse(localStorage.getItem("products"));
-            console.log(productsWithCategory);
-            productsWithCategory = productsWithCategory.filter((product) => product.category === category)
-            return productsWithCategory;
-        }
-        else {
-            if (products.length > 0) {
-                console.log(products);
-                return products;
-            }
-            else {
-                return await request.get(`/products/category/${category}`)
-                    .then((response) => {
-                        return response.data;
-                    })
-                    .catch((error) => {
-                        console.error('Error fetching products:', error);
-                        throw error;
-                    });
-            }
-        }
-    }
-
-    useEffect(() => {
-        // async function getAllCategories() {
-        //     dispatch(loadProduct());
-        //     try {
-        //         const { data } = await request.get("/products/categories");
-        //         const length = data.length;
-        //         setCategories(data);
-        //         let categoryProductData = [];
-        //         for (let i = 0; i < length; i++) {
-        //             const productWithCategory = await fetchProductWithCategory(data[i]);
-        //             categoryProductData = categoryProductData.concat(productWithCategory);
-
-        //         }
-        //         dispatch(loadProductSuccess(categoryProductData));
-        //         console.log(categoryProductData);
-        //     }
-        //     catch (error) {
-        //         dispatch(loadProductFailed(error));
-        //         console.log(error);
-        //     }
-        // }
-        // getAllCategories();
-
-    }, [])
+    const [displayCount, setDisplayCount] = useState(8); // Initial number of products to display
 
     useEffect(() => {
         getProducts(dispatch)
     }, [dispatch])
 
+    const loadMore = () => {
+        setDisplayCount(displayCount + 8);
+    };
+
+    // Render products based on the displayCount
+    const visibleProducts = products.slice(0, displayCount);
+
     return (
         <>
-            <h1 style={{ display: "flex", width: '100vw', justifyContent: 'center' }}>Our Products</h1>
-            {/* {productList.length ? (
-                categories.map((category, index) => (
-                    <div key={index}>
-                        <h2>{category}</h2>
-                        <div className="product-grid">
-                            {products
-                                .filter((product) => product.category === category).slice(0, 4)
-                                .map((product, productIndex) => (
-                                    <div key={productIndex} className="product-item">
-                                        <img src={product.image} alt={product.title} />
-                                        <p>{product.title}</p>
-                                        <p>${product.price}</p>
-                                    </div>
-                                ))}
-                        </div>
+            <h1 style={{ display: 'flex', width: '100vw', justifyContent: 'center' }}>Our Products</h1>
+            <div className='product-grid'>
+                {visibleProducts.map((product) => (
+                    <div key={product.id} className="product-item">
+                        <img src={product.image} alt={product.title} />
+                        <p style={{ fontStyle: 'italic' }}>{product.category}</p>
+                        <p>{product.title}</p>
+                        <p>${product.price}</p>
+                        <Button onClick={() => navigate(`/products/${product.id}`)}>Buy this</Button>
                     </div>
-                ))
-            ) : <Spin id='spin'  tip="Loading..." />} */}
-            {loading ? <Spin id='spin' size="large" /> : (
-                <div className='product-grid'>
-                    {products?.map((product) => (
-                        <div key={product.id} className="product-item">
-                            <img src={product.image} alt={product.title} />
-                            <p>{product.title}</p>
-                            <p>${product.price}</p>
-                        </div>
-                    ))}
-                </div>
-            )}
+                ))}
+            </div>
+            <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                {loading && <Spin id='spin' size="large" />}
+                {displayCount < products.length && !loading && ( // Show "Load More" button if there are more products
+                    <Button onClick={loadMore} style={{ marginTop: "5vh" }}>Load More</Button>
+                )}
+            </div>
         </>
+    );
+};
 
-    )
-}
-
+export default Home;

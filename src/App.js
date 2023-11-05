@@ -35,6 +35,7 @@ function App() {
           }
         />
       ))}
+      
       {privateRoutes.map((route) => (
         <Route
           key={route.path}
