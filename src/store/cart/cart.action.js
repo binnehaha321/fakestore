@@ -10,7 +10,6 @@ async function fetchProductData(cartItem) {
             const { data } = await request.get(`/products/${productId}`);
             data.quantity = quantity;
             products.push(data);
-            console.log(data);
         } catch (error) {
             console.error("Error fetching product data:", error);
         }
@@ -39,11 +38,9 @@ export const fetchAllCart = async (userId) => {
     try {
         const requestUserCart = await request.get(`carts/user/${userId}`);
         const userCart = requestUserCart.data;
-        console.log(userCart);
 
         let productData = [];
         for (const cartItem of userCart) {
-            console.log(cartItem);
             const products = await fetchProductData(cartItem);
             productData = productData.concat(products);
         }
@@ -65,5 +62,5 @@ export const calculateTotalPrice = (products) => {
     if (products && products.length > 0) {
         totalPrice = products.reduce((total, product) => total + (product.price * product.quantity), 0);
     }
-    return totalPrice;
+    return totalPrice.toFixed(2);
 }

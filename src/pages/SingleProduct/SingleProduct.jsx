@@ -1,25 +1,73 @@
 import { Button } from 'antd';
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 
+import { updateProduct, updateProductFailed, updateProductSuccess } from '../../store/cart/cart.slice';
+
 const SingleProduct = () => {
+  const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth)
   const { products } = useSelector((state) => state.home);
   const { product_id } = useParams();
   const navigate = useNavigate();
   const productIdNumber = parseInt(product_id);
-  const { title, price, category, description, image } = products.find((product) => product.id === productIdNumber);
+  let newProduct = products.filter((product) => product.id === productIdNumber);
+  const { image, title, category, price, description } = newProduct[0];
+  const cartProducts = useSelector((state) => state.cart.products);
 
 
-  const addToCart = () => {
-
+  const addToCart = (dispatch) => {
     if (!user) {
-      // If there is no authenticated user, redirect to the login page
       navigate("/login");
     } else {
-      console.log("Add to cart")
+      const productToUpdate = cartProducts.find(product => product.id === productIdNumber);
+      if (productToUpdate) {
+        console.log("run")
+        const updatedProducts = cartProducts.map(product => {
+          if (product.id === productIdNumber) {
+            return {
+              ...product,
+              quantity: product.quantity + 1, // Update quantity to 6 for the product with id 5
+            };
+          }
+          return product; // For other products, return as it is
+        });
+        dispatch(updateProduct())
+        try {
+          dispatch(updateProductSuccess(updatedProducts));
+          localStorage.setItem("cart", JSON.stringify(updatedProducts))
+          navigate(`/cart`);
+        }
+        catch (err) {
+          dispatch(updateProductFailed(err));
+        }
+
+
+        // add new product
+      } else {
+        dispatch(updateProduct());
+        try {
+          const newProductData = {
+            id: newProduct[0].id,
+            title: newProduct[0].title,
+            image: newProduct[0].image,
+            category: newProduct[0].category,
+            price: newProduct[0].price,
+            description: newProduct[0].description,
+            quantity: 1,
+          }
+          const newCart = [...cartProducts, newProductData];
+          console.log(newCart);
+          dispatch(updateProductSuccess(newCart));
+          localStorage.setItem("cart", JSON.stringify(newCart));
+          navigate(`/cart`);
+        }
+        catch (err) {
+          dispatch(updateProductFailed(err));
+        }
+      }
     }
   }
   return (
@@ -33,7 +81,7 @@ const SingleProduct = () => {
             <h2>{title}</h2>
             <p>Category: {category}</p>
             <p>Price: ${price}</p>
-            <Button onClick={addToCart}>Add to Cart</Button>
+            <Button onClick={() => addToCart(dispatch)}>Add to Cart</Button>
           </div>
           <div>
             <h3>Description:</h3>

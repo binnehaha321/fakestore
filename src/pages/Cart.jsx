@@ -22,23 +22,19 @@ export default function Cart() {
             try {
                 const cartFromLocalStorage = localStorage.getItem("cart") !== null;
                 if (cartFromLocalStorage) {
-                    console.log("run");
-                    dispatch(updateProduct(JSON.parse(localStorage.getItem("cart"))));
+                    dispatch(updateProductSuccess(JSON.parse(localStorage.getItem("cart"))));
                 }
                 else {
                     await fetchAllCart(user.id);
                     const products = localStorage.getItem('cart');
                     const parsedData = JSON.parse(products);
-                    dispatch(updateProduct(parsedData));
+                    dispatch(updateProductSuccess(parsedData));
                 }
             } catch (error) {
                 dispatch(updateProductFailed(error));
-            } finally {
-                dispatch(updateProductSuccess());
             }
         };
         fetchData();
-
     }, [dispatch, user]);
 
     useEffect(() => {
@@ -59,8 +55,8 @@ export default function Cart() {
 
 
 
-
     const incrementQuantity = (productId) => {
+        dispatch(updateProduct());
         try {
             const updatedProducts = products.map((product) => {
                 if (product.id === productId) {
@@ -68,32 +64,38 @@ export default function Cart() {
                 }
                 return product;
             });
-            dispatch(updateProduct(updatedProducts));
+            dispatch(updateProductSuccess(updatedProducts));
         }
         catch (err) {
             dispatch(updateProductFailed(err));
-        }
-        finally {
-            dispatch(updateProductSuccess());
         }
     };
 
     const decrementQuantity = (productId) => {
+        dispatch(updateProduct());
         try {
-
-            const updatedProducts = products.map((product) => {
-                if (product.id === productId && product.quantity > 1) {
-                    return { ...product, quantity: product.quantity - 1 };
+            let toRemove = false;
+            let updatedProducts = products.map((product) => {
+                if (product.id === productId) {
+                    if (product.quantity > 1) {
+                        return { ...product, quantity: product.quantity - 1 };
+                    }
+                    else {
+                        toRemove = true;
+                    }
                 }
                 return product;
             });
-            dispatch(updateProduct(updatedProducts));
+
+            if (toRemove === true) {
+                updatedProducts = updatedProducts.filter((product) => product.id !== productId);
+            }
+
+            dispatch(updateProductSuccess(updatedProducts));
+            localStorage.setItem('cart', JSON.stringify(updatedProducts))
         }
         catch (err) {
             dispatch(updateProductFailed(err));
-        }
-        finally {
-            dispatch(updateProductSuccess());
         }
     };
 
