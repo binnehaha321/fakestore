@@ -19,6 +19,7 @@ export default function Cart() {
 
     useEffect(() => {
         const fetchData = async () => {
+            dispatch(updateProduct())
             try {
                 const cartFromLocalStorage = localStorage.getItem("cart") !== null;
                 if (cartFromLocalStorage) {
@@ -99,6 +100,14 @@ export default function Cart() {
         }
     };
 
+    if (loading) {
+        return (
+            <div style={{ textAlign: 'center', marginTop: '20px' }}>
+                <Spin size="large" tip="Loading..." />
+            </div>
+        )
+    }
+
     return (
         <div className='container'>
             <div>
@@ -119,11 +128,7 @@ export default function Cart() {
                 <Button type="primary">Checkout</Button>
             </div>
 
-            {loading ? (
-                <div style={{ textAlign: 'center', marginTop: '20px' }}>
-                    <Spin size="large" tip="Loading..." />
-                </div>
-            ) : products && products.length > 0 ? (
+            {products.length ? (
                 // Display cart items
                 <div>
                     <h2>Your Cart</h2>

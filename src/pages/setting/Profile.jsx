@@ -10,17 +10,15 @@ const Profile = () => {
     const dispatch = useDispatch();
     const { user } = useSelector((state) => state.auth);
     return (
-        <>
-            <div>
-                <h2>{capitalizeFirstLetter([user.username])[0]} Profile</h2>
-                {user && (
-                    <UserInfo />
-                )}
-                <Button onClick={() => {
-                    dispatch(logout());
-                }} style={{ color: "red" }}>logout</Button>
-            </div >
-        </>
+        <div>
+            <h2>{capitalizeFirstLetter([user.username])[0]} Profile</h2>
+            {user && (
+                <UserInfo />
+            )}
+            <Button onClick={() => {
+                dispatch(logout());
+            }} danger>logout</Button>
+        </div >
     );
 };
 
