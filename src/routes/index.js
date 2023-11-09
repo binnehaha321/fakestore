@@ -6,6 +6,7 @@ import ProductsManagement from "../pages/setting/ProductsManagement";
 import Profile from "../pages/setting/Profile";
 import Cart from "../pages/Cart";
 import SingleProduct from "../pages/SingleProduct/SingleProduct";
+import Checkout from "../pages/Checkout";
 const publicRoutes = [
   {
     path: '/',
@@ -28,7 +29,13 @@ const publicRoutes = [
     path:'/cart',
     component:Cart,
     layout: DefaultLayout,
+  },
+  {
+    path:'/checkout',
+    component:Checkout,
+    layout: DefaultLayout,
   }
+
 ]
 
 const privateRoutes = [

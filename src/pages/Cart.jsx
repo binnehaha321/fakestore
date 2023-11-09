@@ -125,7 +125,7 @@ export default function Cart() {
                     <p>${calculateTotalPrice(products)}</p>
                 </div>
 
-                <Button type="primary">Checkout</Button>
+                <Button type='primary'><Link to="/checkout" type="primary">Checkout</Link></Button>
             </div>
 
             {products.length ? (

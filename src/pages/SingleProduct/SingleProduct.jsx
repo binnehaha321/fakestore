@@ -1,5 +1,5 @@
 import { Button } from 'antd';
-import React, { useEffect } from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
@@ -16,6 +16,7 @@ const SingleProduct = () => {
   let newProduct = products.filter((product) => product.id === productIdNumber);
   const { image, title, category, price, description } = newProduct[0];
   const cartProducts = useSelector((state) => state.cart.products);
+  const [quantity, setQuantity] = useState(1);
 
 
   const addToCart = (dispatch) => {
@@ -24,15 +25,14 @@ const SingleProduct = () => {
     } else {
       const productToUpdate = cartProducts.find(product => product.id === productIdNumber);
       if (productToUpdate) {
-        console.log("run")
         const updatedProducts = cartProducts.map(product => {
           if (product.id === productIdNumber) {
             return {
               ...product,
-              quantity: product.quantity + 1, // Update quantity to 6 for the product with id 5
+              quantity: product.quantity + quantity,
             };
           }
-          return product; // For other products, return as it is
+          return product;
         });
         dispatch(updateProduct())
         try {
@@ -70,6 +70,18 @@ const SingleProduct = () => {
       }
     }
   }
+
+  const decrementQuantity = () => {
+    if (quantity === 1) {
+      setQuantity(1);
+      return;
+    }
+    setQuantity(quantity - 1);
+
+  }
+  const incrementQuantity = () => {
+    setQuantity(quantity + 1)
+  }
   return (
     <div style={{ marginTop: "15vh" }}>
       <div style={{ display: 'flex', width: '100%' }}>
@@ -81,6 +93,12 @@ const SingleProduct = () => {
             <h2>{title}</h2>
             <p>Category: {category}</p>
             <p>Price: ${price}</p>
+
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <Button onClick={() => decrementQuantity()}>-</Button>
+              <p><span style={{ color: "blue", marginLeft: "1vw", marginRight: "1vw" }}>{quantity}</span></p>
+              <Button onClick={() => incrementQuantity()}>+</Button>
+            </div>
             <Button onClick={() => addToCart(dispatch)}>Add to Cart</Button>
           </div>
           <div>
