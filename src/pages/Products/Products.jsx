@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { Form, Input, Button } from 'antd';
 import { Spin } from 'antd';
 
@@ -13,6 +14,7 @@ import "../../css/header_menu.css"
 
 function ProductsPage() {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const { products, loading } = useSelector((state) => state.product)
     const [category, setCategory] = useState('all');
     const [limit, setLimit] = useState(4);
@@ -61,7 +63,6 @@ function ProductsPage() {
                 }
                 else {
                     let productFromAPI = await fetchCategoryProduct(category);
-                    console.log(productFromAPI);
                     let filtered = productFromAPI.slice(0, limit);
                     dispatch(updateProduct(filtered));
                 }
@@ -111,6 +112,7 @@ function ProductsPage() {
                             <img src={product.image} alt={product.title} />
                             <p>{product.title}</p>
                             <p>${product.price}</p>
+                            <Button onClick={() => navigate(`/products/${product.id}`)}>Buy this</Button>
                         </div>
                     ))}
                 </div>

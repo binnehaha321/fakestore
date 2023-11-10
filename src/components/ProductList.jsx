@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import { Form, Input, InputNumber, Popconfirm, Table, Typography } from 'antd';
 
 import { addProduct, addProductFailed, addProductSuccess } from '../store/productManagement/productManagement.slice';
-
+import request from '../axios';
 const EditableCell = ({
     editing,
     dataIndex,
@@ -43,12 +43,17 @@ export default function ProductList({ data }) {
     const [editingKey, setEditingKey] = useState('');
     const isEditing = (record) => record.key === editingKey;
     const dispatch = useDispatch();
+    let originalRecord = {};
 
-    const handleDelete = (key) => {
+    const handleDelete = async (key) => {
         try {
-            const newData = data.filter((item) => item.key !== key);
-            dispatch(addProduct(newData));
-            localStorage.setItem("products", JSON.stringify(newData));
+            const response = await request.get(`/products/${key}`, 'delete')
+            if (response.status === 200) {
+                console.log(response.status)
+                const newData = data.filter((item) => item.key !== key);
+                localStorage.setItem("products", JSON.stringify(newData));
+                dispatch(addProduct(newData));
+            }
         }
         catch (err) {
             dispatch(addProductFailed(err));
@@ -66,6 +71,7 @@ export default function ProductList({ data }) {
             category: '',
             ...record,
         });
+        originalRecord = { ...record };
         setEditingKey(record.key);
     };
     const cancel = () => {
@@ -74,22 +80,23 @@ export default function ProductList({ data }) {
 
     const save = async (key) => {
         try {
-            const row = await form.validateFields();
-            console.log(row);
+            const response = await request.get(`./products/${key}`, "put");
+            if (response.status === 200) {
+                const row = await form.validateFields();
 
-            const newData = [...data];
-            const index = newData.findIndex((item) => key === item.key);
+                const newData = [...data];
+                const index = newData.findIndex((item) => key === item.key);
 
-            const item = newData[index];
-            console.log("item:", item);
+                const item = newData[index];
 
-            newData.splice(index, 1, {
-                ...item,
-                ...row,
-            });
-            dispatch(addProduct(newData));
-            localStorage.setItem('products', JSON.stringify(newData));
-            setEditingKey('');
+                newData.splice(index, 1, {
+                    ...item,
+                    ...row,
+                });
+                dispatch(addProduct(newData));
+                localStorage.setItem('products', JSON.stringify(newData));
+                setEditingKey('');
+            }
 
         } catch (err) {
             console.log('Validate Failed:', err);
@@ -127,6 +134,13 @@ export default function ProductList({ data }) {
             editable: true,
         },
         {
+            title: 'Description',
+            dataIndex: 'description',
+            key: 'description',
+            editable: true,
+        },
+
+        {
             title: 'Actions',
             key: 'actions',
             render: (_, record) => {
@@ -141,20 +155,23 @@ export default function ProductList({ data }) {
                         >
                             Save
                         </Typography.Link>
-                        <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
-                            <a>Cancel</a>
-                        </Popconfirm>
+                        {JSON.stringify(record) === JSON.stringify(originalRecord) ?
+                            <Typography.Link onClick={cancel}> Cancel </Typography.Link>
+                            :
+                            <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
+                                <a>Cancel</a>
+                            </Popconfirm>}
                     </span>
                 ) : (
-                    <>
+                    <div style={{ display: "flex", flexDirection: "column" }}>
                         <Typography.Link disabled={editingKey !== ''} onClick={() => edit(record)}>
                             Edit
                         </Typography.Link>
 
-                        <Typography.Link style={{ marginLeft: 8 }} onClick={() => handleDelete(record.key)}>
-                            Remove
-                        </Typography.Link>
-                    </>
+                        <Popconfirm style={{ marginLeft: 8 }} title="Sure to remove?" onConfirm={() => handleDelete(record.key)}>
+                            <a>Remove</a>
+                        </Popconfirm>
+                    </div>
 
                 );
             },

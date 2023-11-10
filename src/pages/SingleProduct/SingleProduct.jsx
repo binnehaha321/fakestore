@@ -56,7 +56,7 @@ const SingleProduct = () => {
             category: newProduct[0].category,
             price: newProduct[0].price,
             description: newProduct[0].description,
-            quantity: 1,
+            quantity: quantity,
           }
           const newCart = [...cartProducts, newProductData];
           console.log(newCart);

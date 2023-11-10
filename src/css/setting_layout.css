@@ -1,12 +1,12 @@
 .setting-layout {
     display: grid;
-    grid-template-columns: 20% 80%;
+    grid-template-columns: 15% 80%;
 }
 
 
 .sidebar li a {
     text-decoration: none;
-    font-size: 1.5vw;
+    font-size: 1vw;
     color: rgb(20, 19, 19);
 }
 
