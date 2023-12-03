@@ -10,16 +10,17 @@ const productManagementSlice = createSlice({
     name: "productManagement",
     initialState,
     reducers:{
-    addProduct:(state,action)=>{
+    addProduct:(state)=>{
         state.loading = true;
+    },
+    addProductSuccess: (state,action) =>{
+        state.loading = false;
         state.products= action.payload;
     },
-    addProductSuccess: (state) =>{
-        state.loading = false;
-    },
     addProductFailed : (state,action) => {
-        state.error = action.payload;
         state.loading = false;
+        state.error = action.payload;
+        console.log(action.payload);
     }
 }
 })

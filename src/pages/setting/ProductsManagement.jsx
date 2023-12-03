@@ -13,23 +13,20 @@ const ProductsManagement = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
+                dispatch(addProduct())
                 const products = localStorage.getItem('products');
                 if (products !== null) {
                     const parsedData = JSON.parse(products);
-                    dispatch(addProduct(parsedData));
+                    dispatch(addProductSuccess(parsedData));
                 }
                 else {
                     await insertProductsToLocalStorage();
                     const products = localStorage.getItem('products');
                     const parsedData = JSON.parse(products);
-                    dispatch(addProduct(parsedData));
+                    dispatch(addProductSuccess(parsedData));
                 }
             } catch (error) {
                 dispatch(addProductFailed(error));
-                console.error('Error handling data:', error);
-            }
-            finally {
-                dispatch(addProductSuccess());
             }
         };
 

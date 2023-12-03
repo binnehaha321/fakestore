@@ -10,16 +10,17 @@ const productSlice = createSlice({
     name: "product",
     initialState,
     reducers:{
-    updateProduct:(state,action)=>{
+    updateProduct:(state)=>{
         state.loading = true;
-        state.products= action.payload;
     },
-    updateProductSuccess: (state) =>{
+    updateProductSuccess: (state,action) =>{
         state.loading = false;
+        state.products= action.payload;
     },
     updateProductFailed : (state,action) => {
         state.loading = false;
         state.error = action.payload;
+        console.log(action.payload);
     }
 }
 })

@@ -5,7 +5,7 @@ import { Form, Input, Button } from 'antd';
 import { Spin } from 'antd';
 
 import { updateProduct, updateProductSuccess, updateProductFailed } from '../../store/product/product.slice';
-import { fetchCategoryProduct, fetchProducts } from '../../store/product/product.action';
+import { fetchCategoryProduct, fetchProducts, filterProduct } from '../../store/product/product.action';
 
 import { FilterByCategory } from './CategoryFilter';
 import "../../css/products.css";
@@ -28,50 +28,28 @@ function ProductsPage() {
         }
     };
 
-    function filterProduct(products, category) {
-        try {
-            if (category !== "all") {
-                let filtered = products.filter(product => product.category === category);
-                filtered = filtered.slice(0, limit);
-                dispatch(updateProduct(filtered));
-            }
-            else {
-                let filtered = products.slice(0, limit);
-                dispatch(updateProduct(filtered));
-            }
-        }
-        catch (err) {
-            dispatch(updateProductFailed(err));
-        }
-        finally {
-            dispatch(updateProductSuccess());
-        }
-    }
-
     const handleFilterClick = async () => {
         const productsFormLocalStorage = localStorage.getItem("products") !== null;
         try {
             if (productsFormLocalStorage) {
                 let products = JSON.parse(localStorage.getItem("products"));
-                filterProduct(products, category);
+                filterProduct(products, category, dispatch, limit);
             }
             else {
+                dispatch(updateProduct())
                 if (category === 'all') {
                     let productFromAPI = await fetchProducts();
                     let filtered = productFromAPI.slice(0, limit);
-                    dispatch(updateProduct(filtered));
+                    dispatch(updateProductSuccess(filtered));
                 }
                 else {
                     let productFromAPI = await fetchCategoryProduct(category);
                     let filtered = productFromAPI.slice(0, limit);
-                    dispatch(updateProduct(filtered));
+                    dispatch(updateProductSuccess(filtered));
                 }
             }
         } catch (error) {
             dispatch(updateProductFailed(error));
-            console.error('Error handling products:', error);
-        } finally {
-            dispatch(updateProductSuccess());
         }
     };
 

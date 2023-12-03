@@ -73,6 +73,7 @@ export default function ProductList({ data }) {
         });
         originalRecord = { ...record };
         setEditingKey(record.key);
+        console.log(originalRecord)
     };
     const cancel = () => {
         setEditingKey('');
@@ -80,12 +81,14 @@ export default function ProductList({ data }) {
 
     const save = async (key) => {
         try {
+            dispatch(addProduct());
             const response = await request.get(`./products/${key}`, "put");
             if (response.status === 200) {
                 const row = await form.validateFields();
 
                 const newData = [...data];
-                const index = newData.findIndex((item) => key === item.key);
+                console.log(newData)
+                const index = newData.findIndex((item) => key === item.id);
 
                 const item = newData[index];
 
@@ -93,17 +96,13 @@ export default function ProductList({ data }) {
                     ...item,
                     ...row,
                 });
-                dispatch(addProduct(newData));
+                dispatch(addProductSuccess(newData));
                 localStorage.setItem('products', JSON.stringify(newData));
                 setEditingKey('');
             }
 
         } catch (err) {
-            console.log('Validate Failed:', err);
             dispatch(addProductFailed(err));
-        }
-        finally {
-            dispatch(addProductSuccess());
         }
     };
 
